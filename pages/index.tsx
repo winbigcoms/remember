@@ -10,6 +10,7 @@ import {
 } from "@ant-design/icons";
 
 import {
+  DetailIframe,
   EventAlret,
   IconContainer,
   KakaoMap,
@@ -18,6 +19,7 @@ import {
   SubmitButton,
 } from "src/components";
 import { useKakaoMap } from "src/Hooks/useKakaoMap";
+import Modal from "antd/lib/modal/Modal";
 
 const iconData = [
   {
@@ -46,12 +48,13 @@ const Home: NextPage = () => {
     setDetailPage(url);
   }, []);
 
-  const { kakaoMap, searchLocation, paginationObject } = useKakaoMap({
-    setSearchData: onSearchData,
-    searchData,
-    onSearchLocationDetail,
-  });
-
+  const { kakaoMap, searchLocation, paginationObject, selectInList } =
+    useKakaoMap({
+      setSearchData: onSearchData,
+      searchData,
+      onSearchLocationDetail,
+    });
+  console.log(detailPage);
   return (
     <MainContainer>
       <IconContainer icons={iconData} />
@@ -59,10 +62,23 @@ const Home: NextPage = () => {
         searchLocation={searchLocation}
         searchData={searchData}
         paginationObject={paginationObject}
+        selectInList={selectInList}
       />
-      {detailPage && <iframe height="100%" width={663} src={detailPage} />}
       <KakaoMap kakaoMapObject={kakaoMap} />
       <EventAlret />
+      <Modal
+        visible={Boolean(detailPage)}
+        onCancel={() => setDetailPage("")}
+        title="상세보기"
+        width={900}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          height: "800px",
+        }}
+      >
+        <DetailIframe src={detailPage} />
+      </Modal>
     </MainContainer>
   );
 };

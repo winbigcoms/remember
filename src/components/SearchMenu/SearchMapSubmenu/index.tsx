@@ -22,10 +22,11 @@ interface SearchMapSubmenuProps {
   searchLocation: (keyword: string) => void;
   searchData: SearchResult;
   paginationObject: SearchResultPagination;
+  selectInList: (x: string, y: string, idx: number) => void;
 }
 
 export const SearchMapSubmenu = (props: SearchMapSubmenuProps) => {
-  const { searchLocation, searchData, paginationObject } = props;
+  const { searchLocation, searchData, paginationObject, selectInList } = props;
   const inputValue = useRef("");
 
   const onChange = (e: InputEvent) => {
@@ -56,6 +57,7 @@ export const SearchMapSubmenu = (props: SearchMapSubmenuProps) => {
               category_name={data.category_name}
               phone={data.phone}
               idx={idx}
+              selectInList={selectInList}
             />
           ))}
         </SearchListItemContainer>

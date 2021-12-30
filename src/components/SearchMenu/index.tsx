@@ -53,10 +53,11 @@ interface SearchMenuProps {
   searchLocation: (keyword: stinrg) => void;
   searchData: SearchResult[];
   paginationObject: SearchResultPagination;
+  selectInList: (x: string, y: string, idx: number) => void;
 }
 
 export const SearchMenu = (props: SearchMenuProps) => {
-  const { searchLocation, searchData, paginationObject } = props;
+  const { searchLocation, searchData, paginationObject, selectInList } = props;
 
   const [openKeys, setOpenKeys] = useState(["map"]);
 
@@ -76,7 +77,7 @@ export const SearchMenu = (props: SearchMenuProps) => {
       onOpenChange={onOpenChange}
       style={{
         width: "15%",
-        minWidth: 250,
+        minWidth: 280,
         border: "1px solid #C8CEFD",
         borderLeft: "none",
       }}
@@ -86,6 +87,7 @@ export const SearchMenu = (props: SearchMenuProps) => {
           searchLocation={searchLocation}
           searchData={searchData}
           paginationObject={paginationObject}
+          selectInList={selectInList}
         />
       </CustomSubMenu>
       <CustomSubMenu key="myLocation" title="내 장소에서 검색">

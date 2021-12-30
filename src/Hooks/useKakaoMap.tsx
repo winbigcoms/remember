@@ -108,7 +108,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
           const iwContent = `
             <div style="position:relative;padding:5px;">
-              <div>${searchData[i].place_name}</div>
+              ${searchData[i].place_name}
             </div>
           `;
 
@@ -122,9 +122,18 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
           infoWindows.current.push(infowindow);
 
           kakao.maps.event.addListener(marker, "click", function () {
+            const initCenter = new (window as any).kakao.maps.LatLng(
+              searchData[i].y,
+              searchData[i].x
+            );
+
+            mapObject.current.setCenter(initCenter);
+
             infoWindows.current.forEach((infoWindowObject) =>
               infoWindowObject.close()
             );
+
+            mapObject.current.setLevel(2);
             // 마커 위에 인포윈도우를 표시합니다
             onSearchLocationDetail(searchData[i].place_url);
             infowindow.open(mapObject.current, marker);
@@ -165,9 +174,24 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
     [setSearchData]
   );
 
+  const selectInList = useCallback((x: string, y: string, idx: number) => {
+    if (kakaoMap.current) {
+      const initCenter = new (window as any).kakao.maps.LatLng(y, x);
+
+      infoWindows.current.forEach((infoWindowObject) =>
+        infoWindowObject.close()
+      );
+
+      infoWindows.current[idx].open(mapObject.current, markers.current[idx]);
+      mapObject.current.setLevel(2);
+      mapObject.current.setCenter(initCenter);
+    }
+  }, []);
+
   return {
     kakaoMap,
     searchLocation,
     paginationObject: paginationObject.current,
+    selectInList,
   };
 };

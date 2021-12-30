@@ -8,6 +8,7 @@ interface SearchListItemProps {
   category_name: string;
   phone: string;
   idx: number;
+  selectInList: (x: string, y: string, idx: number) => void;
 }
 
 const SearchListItemElement = styled.li`
@@ -24,10 +25,10 @@ const SearchListItemElement = styled.li`
 `;
 
 export const SearchListItem = (props: SearchListItemProps) => {
-  const { x, y, place_name, category_name, phone, idx } = props;
+  const { x, y, place_name, category_name, phone, idx, selectInList } = props;
 
   return (
-    <SearchListItemElement>
+    <SearchListItemElement onClick={() => selectInList(x, y, idx)}>
       <div>
         {idx + 1}. {place_name}
       </div>

@@ -16,3 +16,4 @@ export * from "./SearchListItem";
 export * from "./MarkerInfoBox";
 
 export * from "./SearchPagination";
+export * from "./DetailIframe";

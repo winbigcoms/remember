@@ -7,6 +7,7 @@ import Menu from "antd/lib/menu";
 import { SearchMapSubmenu } from "./SearchMapSubmenu";
 import { SearchLocationSubmenu } from "./SearchLocationSubmenu";
 import { SearchSuggestSubmenu } from "./SearchSuggestSubmenu";
+import { SearchResultPagination } from "src/types/searchResultType";
 
 const { SubMenu } = Menu;
 
@@ -17,6 +18,15 @@ const CustomSubMenu = styled(SubMenu)`
 
   &:not(:first-child) {
     border-top: 1px solid #ccc;
+    position: sticky;
+  }
+
+  &:nth-child(2) {
+    bottom: 50px;
+  }
+
+  &:nth-child(3) {
+    bottom: 0px;
   }
 
   & > div {
@@ -42,10 +52,11 @@ const oldMockData = [
 interface SearchMenuProps {
   searchLocation: (keyword: stinrg) => void;
   searchData: SearchResult[];
+  paginationObject: SearchResultPagination;
 }
 
 export const SearchMenu = (props: SearchMenuProps) => {
-  const { searchLocation, searchData } = props;
+  const { searchLocation, searchData, paginationObject } = props;
 
   const [openKeys, setOpenKeys] = useState(["map"]);
 
@@ -74,6 +85,7 @@ export const SearchMenu = (props: SearchMenuProps) => {
         <SearchMapSubmenu
           searchLocation={searchLocation}
           searchData={searchData}
+          paginationObject={paginationObject}
         />
       </CustomSubMenu>
       <CustomSubMenu key="myLocation" title="내 장소에서 검색">

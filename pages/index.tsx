@@ -1,5 +1,7 @@
 import type { NextPage } from "next";
 
+import { useCallback, useState } from "react";
+
 import {
   LineChartOutlined,
   RedoOutlined,
@@ -16,7 +18,6 @@ import {
   SubmitButton,
 } from "src/components";
 import { useKakaoMap } from "src/Hooks/useKakaoMap";
-import { useState } from "react";
 
 const iconData = [
   {
@@ -35,21 +36,31 @@ const iconData = [
 
 const Home: NextPage = () => {
   const [searchData, setSearchData] = useState<SearchResult[]>([]);
+  const [detailPage, setDetailPage] = useState("");
 
   const onSearchData = (data: any[]) => {
-    console.log(data);
     setSearchData(() => data);
   };
 
-  const { kakaoMap, searchLocation } = useKakaoMap({
+  const onSearchLocationDetail = useCallback((url: string) => {
+    setDetailPage(url);
+  }, []);
+
+  const { kakaoMap, searchLocation, paginationObject } = useKakaoMap({
     setSearchData: onSearchData,
     searchData,
+    onSearchLocationDetail,
   });
 
   return (
     <MainContainer>
       <IconContainer icons={iconData} />
-      <SearchMenu searchLocation={searchLocation} searchData={searchData} />
+      <SearchMenu
+        searchLocation={searchLocation}
+        searchData={searchData}
+        paginationObject={paginationObject}
+      />
+      {detailPage && <iframe height="100%" width={663} src={detailPage} />}
       <KakaoMap kakaoMapObject={kakaoMap} />
       <EventAlret />
     </MainContainer>

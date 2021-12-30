@@ -47,7 +47,6 @@ export const SearchLocationSubmenu = () => {
   const [locationType, setLocationType] = useState<"food" | "travel">("food");
 
   const onFormChange = (changeValue) => {
-    console.log(changeValue);
     const key = Object.keys(changeValue)[0];
 
     if (key === "locationType") {

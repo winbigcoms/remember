@@ -4,8 +4,8 @@ import styled from "styled-components";
 
 const EventAlretElement = styled(Popover)`
   position: absolute;
-  right: 10px;
-  top: 10px;
+  right: 12px;
+  top: 15px;
   width: 60px;
   height: 60px;
   border: 1px solid #c8cefd;

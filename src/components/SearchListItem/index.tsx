@@ -12,8 +12,10 @@ interface SearchListItemProps {
 }
 
 const SearchListItemElement = styled.li`
-  margin-bottom: 15px;
   width: 100%;
+  cursor: pointer;
+  border-bottom: 1px solid #ccc;
+  padding: 10px 0px;
 
   & > div {
     line-height: normal;
@@ -21,6 +23,10 @@ const SearchListItemElement = styled.li`
 
   & > div:first-child {
     margin-bottom: 3px;
+  }
+
+  &:last-child {
+    border-bottom: 2px solid #c8cefd;
   }
 `;
 

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { KeyboardEventHandler, useRef } from "react";
 
 import styled from "styled-components";
 
@@ -33,11 +33,17 @@ export const SearchMapSubmenu = (props: SearchMapSubmenuProps) => {
     inputValue.current = e.target.value;
   };
 
+  const onPressEnter = (e: KeyboardEventHandler<HTMLInputElement>) => {
+    inputValue.current = e.target.value;
+    searchLocation(e.target.value);
+  };
+
   return (
     <SearchContainer>
       <Input
         placeholder="키워드 검색"
         onChange={onChange}
+        onPressEnter={onPressEnter}
         style={{ marginBottom: "15px" }}
       />
       <SubmitButton

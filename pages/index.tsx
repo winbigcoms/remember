@@ -1,6 +1,6 @@
 import type { NextPage } from "next";
 
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import {
   LineChartOutlined,
@@ -20,6 +20,7 @@ import {
 } from "src/components";
 import { useKakaoMap } from "src/Hooks/useKakaoMap";
 import Modal from "antd/lib/modal/Modal";
+import User from "src/service/Login";
 
 const iconData = [
   {
@@ -48,13 +49,21 @@ const Home: NextPage = () => {
     setDetailPage(url);
   }, []);
 
+  const onSearchLocationReset = useCallback(() => {
+    setDetailPage("");
+  }, []);
+
   const { kakaoMap, searchLocation, paginationObject, selectInList } =
     useKakaoMap({
       setSearchData: onSearchData,
       searchData,
       onSearchLocationDetail,
     });
-  console.log(detailPage);
+
+  useEffect(() => {
+    User.login("bigcoms", "123456");
+  }, []);
+
   return (
     <MainContainer>
       <IconContainer icons={iconData} />
@@ -68,7 +77,8 @@ const Home: NextPage = () => {
       <EventAlret />
       <Modal
         visible={Boolean(detailPage)}
-        onCancel={() => setDetailPage("")}
+        onCancel={onSearchLocationReset}
+        footer={null}
         title="상세보기"
         width={900}
         style={{

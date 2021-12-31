@@ -38,25 +38,6 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
           options
         );
 
-        kakao.maps.event.addListener(
-          mapObject.current,
-          "click",
-          function (mouseEvent) {
-            console.log(mouseEvent);
-            // 클릭한 위도, 경도 정보를 가져옵니다
-            // var latlng = mouseEvent.latLng;
-
-            // 마커 위치를 클릭한 위치로 옮깁니다
-            // marker.setPosition(latlng);
-
-            // var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-            // message += '경도는 ' + latlng.getLng() + ' 입니다';
-
-            // var resultDiv = document.getElementById('clickLatlng');
-            // resultDiv.innerHTML = message;
-          }
-        );
-
         const marker = new (window as any).kakao.maps.Marker({
           position: initCenter,
           map: mapObject.current,
@@ -86,6 +67,10 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
         markers.current.forEach((mark) => {
           mark.setMap(null);
         });
+
+        infoWindows.current.forEach((infoWindowObject) =>
+          infoWindowObject.close()
+        );
 
         infoWindows.current = [];
 
@@ -140,9 +125,21 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
           infoWindows.current.push(infowindow);
 
-          kakao.maps.event.addListener(marker, "click", function (e) {
-            console.log(e);
+          kakao.maps.event.addListener(marker, "mouseout", (e) => {
+            // 마커 위에 인포윈도우를 표시합니다
+            infowindow.close();
+          });
 
+          kakao.maps.event.addListener(marker, "mouseover", (e) => {
+            const initCenter = new (window as any).kakao.maps.LatLng(
+              searchData[i].y,
+              searchData[i].x
+            );
+            // 마커 위에 인포윈도우를 표시합니다
+            infowindow.open(mapObject.current, marker);
+          });
+
+          kakao.maps.event.addListener(marker, "click", function (e) {
             const initCenter = new (window as any).kakao.maps.LatLng(
               searchData[i].y,
               searchData[i].x
@@ -157,7 +154,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
             mapObject.current.setLevel(2);
             // 마커 위에 인포윈도우를 표시합니다
             if (searchData[i].place_url) {
-              onSearchLocationDetail(searchData[i].place_url);
+              onSearchLocationDetail(searchData[i]);
               infowindow.open(mapObject.current, marker);
             }
           });

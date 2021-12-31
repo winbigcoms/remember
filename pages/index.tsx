@@ -1,6 +1,7 @@
 import type { NextPage } from "next";
 
 import { useCallback, useEffect, useState } from "react";
+import Modal from "antd/lib/modal/Modal";
 
 import {
   LineChartOutlined,
@@ -18,9 +19,12 @@ import {
   SearchMenu,
   SubmitButton,
 } from "src/components";
-import { useKakaoMap } from "src/Hooks/useKakaoMap";
-import Modal from "antd/lib/modal/Modal";
+
 import User from "src/service/Login";
+
+import { useKakaoMap } from "src/Hooks/useKakaoMap";
+
+import { SearchResult } from "src/types/searchResultType";
 
 const iconData = [
   {
@@ -39,7 +43,9 @@ const iconData = [
 
 const Home: NextPage = () => {
   const [searchData, setSearchData] = useState<SearchResult[]>([]);
-  const [detailPage, setDetailPage] = useState("");
+  const [detailPage, setDetailPage] = useState<SearchResult>({});
+  const [userLocation, setUserLocation] = useState([]);
+  const [userData, setUserData] = useState({});
 
   const onSearchData = (data: any[]) => {
     setSearchData(() => data);
@@ -61,7 +67,11 @@ const Home: NextPage = () => {
     });
 
   useEffect(() => {
-    User.login("bigcoms", "123456");
+    const { userData, locations } = User.login("bigcoms", "123456");
+    if (userData) {
+      setUserLocation(locations);
+      setUserData(userData);
+    }
   }, []);
 
   return (
@@ -76,10 +86,10 @@ const Home: NextPage = () => {
       <KakaoMap kakaoMapObject={kakaoMap} />
       <EventAlret />
       <Modal
-        visible={Boolean(detailPage)}
+        visible={Boolean(detailPage.place_url)}
         onCancel={onSearchLocationReset}
         footer={null}
-        title="상세보기"
+        title="장소 상세보기"
         width={900}
         style={{
           display: "flex",
@@ -87,7 +97,7 @@ const Home: NextPage = () => {
           height: "800px",
         }}
       >
-        <DetailIframe src={detailPage} />
+        <DetailIframe detailPage={detailPage} />
       </Modal>
     </MainContainer>
   );

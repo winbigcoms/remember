@@ -4,6 +4,8 @@ export * from "./MainContainer";
 export * from "./IconContainer";
 export * from "./SearchListItemContainer";
 
+export * from "./AddLocationForm";
+
 export * from "./SearchMenu";
 
 export * from "./EventAlret";

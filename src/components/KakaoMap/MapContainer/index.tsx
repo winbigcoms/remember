@@ -6,7 +6,7 @@ type MapContainerProps = {
 };
 
 const MapContainerElement = styled.div`
-  width: calc(100% - 360px);
+  width: calc(100% - 355px);
 `;
 
 const MapContainer: React.FC<MapContainerProps> = forwardRef((props, ref) => {

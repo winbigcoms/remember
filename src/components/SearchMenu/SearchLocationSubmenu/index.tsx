@@ -77,12 +77,7 @@ export const SearchLocationSubmenu = () => {
           />
         )}
         <FormInput name="location" placeholder="주소로 검색" />
-        <SubmitButton
-          text="찾아!"
-          onSubmit={() => {
-            console.log("1");
-          }}
-        />
+        <SubmitButton text="찾아!" onSubmit={() => {}} />
       </Form>
     </SearchContainer>
   );

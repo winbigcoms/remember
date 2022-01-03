@@ -6,40 +6,7 @@ import Input from "antd/lib/input";
 import { FormInput, FormSelect, SubmitButton } from "src/components";
 import { useState } from "react";
 import { SearchContainer } from "../SearchContainer";
-
-const mockFoodType = [
-  {
-    value: "korean",
-    title: "한식",
-  },
-  {
-    value: "chinese",
-    title: "중식",
-  },
-  {
-    value: "japanese",
-    title: "일식",
-  },
-  {
-    value: "western",
-    title: "양식",
-  },
-  {
-    value: "fusion",
-    title: "퓨젼",
-  },
-];
-
-const locationTypeOption = [
-  {
-    value: "travel",
-    title: "여행/방문",
-  },
-  {
-    value: "food",
-    title: "맛집",
-  },
-];
+import { foodType, locationTypeOption } from "src/const";
 
 export const SearchLocationSubmenu = () => {
   const [form] = useForm();
@@ -73,7 +40,7 @@ export const SearchLocationSubmenu = () => {
           <FormSelect
             name="foodType"
             placeholder="음식 종류로 검색"
-            options={mockFoodType}
+            options={foodType}
           />
         )}
         <FormInput name="location" placeholder="주소로 검색" />

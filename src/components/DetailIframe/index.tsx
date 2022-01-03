@@ -37,14 +37,20 @@ const DetailIframeElement = styled.iframe`
   }
 `;
 
+const NoUrl = styled.div`
+  width: 940px;
+  height: 650px;
+`;
+
 type ShowType = "site" | "save";
 
 interface DetailIframeProps {
   detailPage: SearchResult;
+  visible: boolean;
 }
 
 export const DetailIframe = (props: DetailIframeProps) => {
-  const { detailPage } = props;
+  const { detailPage, visible } = props;
 
   const [showState, setShowState] = useState<ShowType>("site");
   const [isLoading, setLoading] = useState(true);
@@ -60,11 +66,16 @@ export const DetailIframe = (props: DetailIframeProps) => {
   };
 
   useEffect(() => {
-    setShowState("site");
     setLoading(true);
 
-    iframeRef.current.addEventListener("load", onLoadingFinish);
-  }, [detailPage]);
+    if (Boolean(detailPage.place_url) && showState === "site") {
+      iframeRef.current.addEventListener("load", onLoadingFinish);
+    }
+  }, [detailPage, showState]);
+  console.log(detailPage);
+  useEffect(() => {
+    setShowState("site");
+  }, []);
 
   return (
     <DetailIFrameContainer>
@@ -76,7 +87,7 @@ export const DetailIframe = (props: DetailIframeProps) => {
         />
       </div>
       {showState === "site" ? (
-        detailPage.place_url !== "" && (
+        detailPage.place_url !== "" ? (
           <DetailIframeElement
             ref={iframeRef}
             src={detailPage.place_url}
@@ -87,6 +98,8 @@ export const DetailIframe = (props: DetailIframeProps) => {
             width={940}
             height={650}
           />
+        ) : (
+          <NoUrl>상세 정보가 없어요!</NoUrl>
         )
       ) : (
         <AddLocationForm detailPage={detailPage} />

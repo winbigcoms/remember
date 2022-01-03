@@ -13,7 +13,7 @@ interface useKakaoMapProps {
 export const useKakaoMap = (props: useKakaoMapProps) => {
   const { setSearchData, searchData, onSearchLocationDetail } = props;
 
-  const markers = useRef(null);
+  const markers = useRef([]);
   const infoWindows = useRef([]);
   const kakaoMap = useRef<HTMLDivElement>(null);
   const mapObject = useRef(null);
@@ -38,17 +38,8 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
           options
         );
 
-        const marker = new (window as any).kakao.maps.Marker({
-          position: initCenter,
-          map: mapObject.current,
-        });
-
         mapObject.current.relayout();
         mapObject.current.setCenter(initCenter);
-
-        marker.setPosition(initCenter);
-
-        markers.current = [marker];
 
         const zoomControl = new (window as any).kakao.maps.ZoomControl();
 

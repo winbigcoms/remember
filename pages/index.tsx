@@ -25,6 +25,7 @@ import User from "src/service/Login";
 import { useKakaoMap } from "src/Hooks/useKakaoMap";
 
 import { SearchResult } from "src/types/searchResultType";
+import Head from "next/head";
 
 const iconData = [
   {
@@ -46,6 +47,7 @@ const Home: NextPage = () => {
   const [detailPage, setDetailPage] = useState<SearchResult>({});
   const [userLocation, setUserLocation] = useState([]);
   const [userData, setUserData] = useState({});
+  const [modalVisible, setModalVisible] = useState(false);
 
   const onSearchData = (data: any[]) => {
     setSearchData(() => data);
@@ -53,10 +55,12 @@ const Home: NextPage = () => {
 
   const onSearchLocationDetail = useCallback((url: string) => {
     setDetailPage(url);
+    setModalVisible(true);
   }, []);
 
   const onSearchLocationReset = useCallback(() => {
-    setDetailPage("");
+    setModalVisible(false);
+    setDetailPage({});
   }, []);
 
   const { kakaoMap, searchLocation, paginationObject, selectInList } =
@@ -75,31 +79,35 @@ const Home: NextPage = () => {
   }, []);
 
   return (
-    <MainContainer>
-      <IconContainer icons={iconData} />
-      <SearchMenu
-        searchLocation={searchLocation}
-        searchData={searchData}
-        paginationObject={paginationObject}
-        selectInList={selectInList}
-      />
-      <KakaoMap kakaoMapObject={kakaoMap} />
-      <EventAlret />
-      <Modal
-        visible={Boolean(detailPage.place_url)}
-        onCancel={onSearchLocationReset}
-        footer={null}
-        title="장소 상세보기"
-        width={900}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          height: "800px",
-        }}
-      >
-        <DetailIframe detailPage={detailPage} />
-      </Modal>
-    </MainContainer>
+    <>
+      <MainContainer>
+        <IconContainer icons={iconData} />
+        <SearchMenu
+          searchLocation={searchLocation}
+          searchData={searchData}
+          paginationObject={paginationObject}
+          selectInList={selectInList}
+        />
+        <KakaoMap kakaoMapObject={kakaoMap} />
+        <EventAlret />
+        {modalVisible && (
+          <Modal
+            visible={modalVisible}
+            onCancel={onSearchLocationReset}
+            footer={null}
+            title="장소 상세보기"
+            width={900}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              height: "800px",
+            }}
+          >
+            <DetailIframe detailPage={detailPage} visible={modalVisible} />
+          </Modal>
+        )}
+      </MainContainer>
+    </>
   );
 };
 

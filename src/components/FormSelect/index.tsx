@@ -5,17 +5,18 @@ interface FormSelectProps {
   name: string;
   placeholder: string;
   label?: string;
+  onChange?: (value) => void;
   options: { value: string | number; title: string }[];
 }
 
 const { Option } = Select;
 
 export const FormSelect = (props: FormSelectProps) => {
-  const { name, placeholder, label, options } = props;
+  const { name, placeholder, label, options, onChange } = props;
 
   return (
     <Form.Item label={label} name={name}>
-      <Select placeholder={placeholder} size="large">
+      <Select placeholder={placeholder} size="large" onChange={onChange}>
         {options &&
           options.map((data, idx) => (
             <Option value={data.value} key={idx}>

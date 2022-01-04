@@ -3,6 +3,7 @@ import { SubmitButton } from "src/components";
 import { SearchResult } from "src/types/searchResultType";
 import { useEffect, useRef, useState } from "react";
 import { AddLocationForm } from "../AddLocationForm";
+import { User } from "src/types/user";
 
 const DetailIFrameContainer = styled.div`
   position: relative;
@@ -47,10 +48,12 @@ type ShowType = "site" | "save";
 interface DetailIframeProps {
   detailPage: SearchResult;
   visible: boolean;
+  userData: User;
+  onSearchLocationReset: () => void;
 }
 
 export const DetailIframe = (props: DetailIframeProps) => {
-  const { detailPage, visible } = props;
+  const { detailPage, visible, userData, onSearchLocationReset } = props;
 
   const [showState, setShowState] = useState<ShowType>("site");
   const [isLoading, setLoading] = useState(true);
@@ -72,7 +75,7 @@ export const DetailIframe = (props: DetailIframeProps) => {
       iframeRef.current.addEventListener("load", onLoadingFinish);
     }
   }, [detailPage, showState]);
-  console.log(detailPage);
+
   useEffect(() => {
     setShowState("site");
   }, []);
@@ -102,7 +105,11 @@ export const DetailIframe = (props: DetailIframeProps) => {
           <NoUrl>상세 정보가 없어요!</NoUrl>
         )
       ) : (
-        <AddLocationForm detailPage={detailPage} />
+        <AddLocationForm
+          detailPage={detailPage}
+          userData={userData}
+          onSearchLocationReset={onSearchLocationReset}
+        />
       )}
     </DetailIFrameContainer>
   );

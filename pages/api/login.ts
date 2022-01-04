@@ -5,39 +5,34 @@ import mongoClient from "connect/mongo";
 export default function login(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>((resolve) => {
     if (req.method === "POST") {
-      try {
-        const params = req.body;
+      const params = req.body;
 
+      async function userLogin(params) {
         const { id, password } = params;
 
-        mongoClient.connect(async (err) => {
-          const userData = await mongoClient
-            .db("stopSayWWE")
-            .collection("user")
-            .findOne({ id, password });
+        await mongoClient.connect();
 
-          const userId = userData ? userData._id.toString() : "";
+        const db = mongoClient.db("stopSayWWE");
 
-          const locations = await mongoClient
-            .db("stopSayWWE")
-            .collection("location")
-            .find({ owner: userId });
+        const userCollection = db.collection("user");
+        const locationCollection = db.collection("location");
 
-          const resultUserData = {
-            ...userData,
-            id: userId,
-          };
+        const userData = await userCollection.findOne({ id, password });
+        const userId = userData ? userData._id.toString() : "";
 
-          delete resultUserData._id;
+        const locations = await locationCollection
+          .find({ owner: userId })
+          .toArray()
+          .then((res) => res);
 
-          res.send({ userData: resultUserData, locations });
-
-          mongoClient.close();
-        });
-      } catch (err) {
-        res.send({ list: [] });
-        return resolve();
+        res.send({ userData, locations });
       }
+
+      userLogin(params)
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => mongoClient.close());
     }
   });
 }

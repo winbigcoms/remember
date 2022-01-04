@@ -2,30 +2,30 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import mongoClient from "connect/mongo";
 
-export default function login(req: NextApiRequest, res: NextApiResponse) {
+export default function location(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>((resolve) => {
     if (req.method === "POST") {
-      try {
-        const params = req.body;
+      const params = req.body;
 
-        mongoClient.connect(async (err) => {
-          const userData = await mongoClient
-            .db("stopSayWWE")
-            .collection("location")
-            .inseartOne(params);
+      async function addLocation(params) {
+        await mongoClient.connect();
+        const db = mongoClient.db("stopSayWWE");
 
-          const userId = userData ? userData._id.toString() : "";
+        const locationCollection = db.collection("location");
+        await locationCollection.insertOne(params);
 
-          delete resultUserData._id;
-
-          res.send({ userData: resultUserData, locations });
-
-          mongoClient.close();
+        const locations = await locationCollection.find({
+          owner: params.owner,
         });
-      } catch (err) {
-        res.send({ list: [] });
-        return resolve();
+
+        res.send({ locations });
       }
+
+      addLocation(params)
+        .catch((err) => {
+          console.log(err);
+        })
+        .finally(() => mongoClient.close());
     }
   });
 }

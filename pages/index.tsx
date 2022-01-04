@@ -20,7 +20,7 @@ import {
   SubmitButton,
 } from "src/components";
 
-import User from "src/service/Login";
+import User from "src/service/login";
 
 import { useKakaoMap } from "src/Hooks/useKakaoMap";
 
@@ -46,7 +46,7 @@ const Home: NextPage = () => {
   const [searchData, setSearchData] = useState<SearchResult[]>([]);
   const [detailPage, setDetailPage] = useState<SearchResult>({});
   const [userLocation, setUserLocation] = useState([]);
-  const [userData, setUserData] = useState({});
+  const [userData, setUserData] = useState<User>({});
   const [modalVisible, setModalVisible] = useState(false);
 
   const onSearchData = (data: any[]) => {
@@ -68,14 +68,18 @@ const Home: NextPage = () => {
       setSearchData: onSearchData,
       searchData,
       onSearchLocationDetail,
+      userLocation,
     });
 
   useEffect(() => {
-    const { userData, locations } = User.login("bigcoms", "123456");
-    if (userData) {
-      setUserLocation(locations);
-      setUserData(userData);
-    }
+    User.login("bigcoms", "123456").then((res) => {
+      const { userData, locations } = res;
+
+      if (userData) {
+        setUserLocation(locations);
+        setUserData(userData);
+      }
+    });
   }, []);
 
   return (
@@ -103,7 +107,12 @@ const Home: NextPage = () => {
               height: "800px",
             }}
           >
-            <DetailIframe detailPage={detailPage} visible={modalVisible} />
+            <DetailIframe
+              detailPage={detailPage}
+              visible={modalVisible}
+              userData={userData}
+              onClose={onSearchLocationReset}
+            />
           </Modal>
         )}
       </MainContainer>

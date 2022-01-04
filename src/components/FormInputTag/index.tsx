@@ -1,7 +1,13 @@
 import { Form, FormInstance } from "antd";
 
 import Input from "antd/lib/input/Input";
-import { MouseEvent, useRef, useState } from "react";
+import {
+  KeyboardEvent,
+  MouseEvent,
+  MutableRefObject,
+  useRef,
+  useState,
+} from "react";
 import { TagBox } from "..";
 
 interface FormInputTagProps {
@@ -9,6 +15,9 @@ interface FormInputTagProps {
   placeholder: string;
   label?: string;
   form: FormInstance;
+  tags: string[];
+  onPressEnter: (event: KeyboardEvent, inputRef: MutableRefObject) => void;
+  onRemoveTag: (title: string) => void;
 }
 
 export const FormInputTag = (props: FormInputTagProps) => {
@@ -17,28 +26,19 @@ export const FormInputTag = (props: FormInputTagProps) => {
     placeholder = "엔터를 누르면 추가가 되요",
     label,
     form,
+    tags,
+    onPressEnter,
+    onRemoveTag,
   } = props;
 
-  const [tags, setTags] = useState([]);
   const inputRef = useRef(null);
-
-  const onPressEnter = (value: string) => {
-    setTags((state) => [...state, value.target.value]);
-
-    inputRef.current.state.value = "";
-    form.setFieldsValue({ [name]: "" });
-  };
-
-  const onRemoveTag = (title: string) => {
-    setTags((initTags) => initTags.filter((text) => text !== title));
-  };
 
   return (
     <Form.Item label={label} name={name}>
       <TagBox name={name} TagItems={tags} onRemoveTag={onRemoveTag} />
       <Input
         placeholder={placeholder}
-        onPressEnter={onPressEnter}
+        onPressEnter={(e) => onPressEnter(e, inputRef)}
         value={inputRef.current?.value}
         ref={inputRef}
       />

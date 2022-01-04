@@ -36,6 +36,9 @@ export const SearchMapSubmenu = (props: SearchMapSubmenuProps) => {
   const onPressEnter = (e: KeyboardEventHandler<HTMLInputElement>) => {
     inputValue.current = e.target.value;
     searchLocation(e.target.value);
+
+    e.stopPropagation();
+    e.preventDefault();
   };
 
   return (

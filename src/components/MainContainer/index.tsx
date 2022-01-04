@@ -9,7 +9,7 @@ const MainContainerElement = styled.div`
 
   height: 100vh;
 
-  padding: 15px 0px;
+  padding: 5px 0px;
   position: relative;
 `;
 

@@ -1,4 +1,4 @@
-import { getLocationType } from "src/utill";
+import { showLocationType } from "src/utill";
 import styled from "styled-components";
 
 interface SearchListItemProps {
@@ -38,7 +38,7 @@ export const SearchListItem = (props: SearchListItemProps) => {
       <div>
         {idx + 1}. {place_name}
       </div>
-      <div>타입: {getLocationType(category_name)}</div>
+      <div>타입: {showLocationType(category_name)}</div>
       <div>연락처: {phone}</div>
     </SearchListItemElement>
   );

@@ -1,4 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from "react";
+
+import { AddLocationData } from "src/types/locationType";
+
 import {
   SearchResult,
   SearchResultPagination,
@@ -8,12 +11,14 @@ interface useKakaoMapProps {
   setSearchData: (data: any[]) => void;
   searchData: SearchResult[];
   onSearchLocationDetail: (url: string) => void;
+  userLocation: AddLocationData[];
 }
 
 export const useKakaoMap = (props: useKakaoMapProps) => {
-  const { setSearchData, searchData, onSearchLocationDetail } = props;
+  const { setSearchData, searchData, onSearchLocationDetail, userLocation } =
+    props;
 
-  const markers = useRef(null);
+  const markers = useRef([]);
   const infoWindows = useRef([]);
   const kakaoMap = useRef<HTMLDivElement>(null);
   const mapObject = useRef(null);
@@ -22,7 +27,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
   useEffect(() => {
     if (kakaoMap && kakaoMap.current) {
-      if (searchData.length === 0) {
+      if (searchData.length === 0 && userLocation.length === 0) {
         const x = 126.914454;
         const y = 37.549913;
 
@@ -30,7 +35,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
         const options = {
           center: initCenter,
-          level: 2,
+          level: 8,
         };
 
         mapObject.current = new (window as any).kakao.maps.Map(
@@ -38,36 +43,8 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
           options
         );
 
-        kakao.maps.event.addListener(
-          mapObject.current,
-          "click",
-          function (mouseEvent) {
-            console.log(mouseEvent);
-            // 클릭한 위도, 경도 정보를 가져옵니다
-            // var latlng = mouseEvent.latLng;
-
-            // 마커 위치를 클릭한 위치로 옮깁니다
-            // marker.setPosition(latlng);
-
-            // var message = '클릭한 위치의 위도는 ' + latlng.getLat() + ' 이고, ';
-            // message += '경도는 ' + latlng.getLng() + ' 입니다';
-
-            // var resultDiv = document.getElementById('clickLatlng');
-            // resultDiv.innerHTML = message;
-          }
-        );
-
-        const marker = new (window as any).kakao.maps.Marker({
-          position: initCenter,
-          map: mapObject.current,
-        });
-
         mapObject.current.relayout();
         mapObject.current.setCenter(initCenter);
-
-        marker.setPosition(initCenter);
-
-        markers.current = [marker];
 
         const zoomControl = new (window as any).kakao.maps.ZoomControl();
 
@@ -80,12 +57,26 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
           window as any
         ).kakao.maps.services.Places();
       } else {
-        const x = searchData[0].x;
-        const y = searchData[0].y;
+        const target =
+          searchData.length !== 0
+            ? searchData
+            : userLocation.map((data) => ({
+                x: data.position.x,
+                y: data.position.y,
+                place_name: data.title,
+                place_url: data,
+              }));
+
+        const x = target[0].x;
+        const y = target[0].y;
 
         markers.current.forEach((mark) => {
           mark.setMap(null);
         });
+
+        infoWindows.current.forEach((infoWindowObject) =>
+          infoWindowObject.close()
+        );
 
         infoWindows.current = [];
 
@@ -98,10 +89,10 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
         let markerBucket = [];
 
-        for (let i = 0; i < searchData.length; i++) {
+        for (let i = 0; i < target.length; i++) {
           const position = new (window as any).kakao.maps.LatLng(
-            searchData[i].y,
-            searchData[i].x
+            target[i].y,
+            target[i].x
           );
 
           const imageSrc =
@@ -127,7 +118,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
           const iwContent = `
             <div style="position:relative;padding:5px;">
-              ${searchData[i].place_name}
+              ${target[i].place_name}
             </div>
           `;
 
@@ -140,12 +131,24 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
           infoWindows.current.push(infowindow);
 
-          kakao.maps.event.addListener(marker, "click", function (e) {
-            console.log(e);
+          kakao.maps.event.addListener(marker, "mouseout", (e) => {
+            // 마커 위에 인포윈도우를 표시합니다
+            infowindow.close();
+          });
 
+          kakao.maps.event.addListener(marker, "mouseover", (e) => {
             const initCenter = new (window as any).kakao.maps.LatLng(
-              searchData[i].y,
-              searchData[i].x
+              target[i].y,
+              target[i].x
+            );
+            // 마커 위에 인포윈도우를 표시합니다
+            infowindow.open(mapObject.current, marker);
+          });
+
+          kakao.maps.event.addListener(marker, "click", function (e) {
+            const initCenter = new (window as any).kakao.maps.LatLng(
+              target[i].y,
+              target[i].x
             );
 
             mapObject.current.setCenter(initCenter);
@@ -156,8 +159,8 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
 
             mapObject.current.setLevel(2);
             // 마커 위에 인포윈도우를 표시합니다
-            if (searchData[i].place_url) {
-              onSearchLocationDetail(searchData[i].place_url);
+            if (target[i].place_url) {
+              onSearchLocationDetail(target[i]);
               infowindow.open(mapObject.current, marker);
             }
           });
@@ -175,7 +178,7 @@ export const useKakaoMap = (props: useKakaoMapProps) => {
         mapObject.current.relayout();
       }
     }
-  }, [onSearchLocationDetail, searchData]);
+  }, [onSearchLocationDetail, searchData, userLocation]);
 
   const searchLocation = useCallback(
     (keyword: string) => {

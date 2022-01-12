@@ -23,6 +23,10 @@ export const foodType = [
 
 export const locationTypeOption = [
   {
+    value: "",
+    title: "전체",
+  },
+  {
     value: "travel",
     title: "여행/방문",
   },

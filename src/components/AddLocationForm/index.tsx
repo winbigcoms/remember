@@ -27,7 +27,7 @@ const AddLocationFormElement = styled.div`
   width: 940px;
 
   label {
-    width: 100px;
+    min-width: 100px;
   }
 `;
 

@@ -2,12 +2,14 @@ import { NextApiRequest, NextApiResponse } from "next";
 
 import mongoClient from "connect/mongo";
 
+import { AddLocationData } from "src/types/locationType";
+
 export default function location(req: NextApiRequest, res: NextApiResponse) {
   return new Promise<void>((resolve) => {
     if (req.method === "POST") {
       const params = req.body;
 
-      async function addLocation(params) {
+      async function addLocation(params:AddLocationData) {
         await mongoClient.connect();
         const db = mongoClient.db("stopSayWWE");
 
